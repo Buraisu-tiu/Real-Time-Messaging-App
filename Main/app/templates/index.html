@@ -1,0 +1,40 @@
+<script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+<script>
+    const firebaseConfig = {
+        apiKey: "your-api-key",
+        authDomain: "your-auth-domain",
+        projectId: "your-project-id",
+    };
+    firebase.initializeApp(firebaseConfig);
+</script>
+<script>
+    let startTime, interval, elapsedTime = 0;
+    
+    function startTimer() {
+        startTime = Date.now() - elapsedTime;
+        interval = setInterval(() => {
+            elapsedTime = Date.now() - startTime;
+            document.getElementById("timer").textContent = (elapsedTime / 1000).toFixed(1) + "s";
+        }, 100);
+    }
+    
+    function stopTimer() {
+        clearInterval(interval);
+        const duration = elapsedTime / 1000; // in seconds
+        console.log("Study Duration:", duration);
+        // Send duration to backend
+        fetch('/log-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ duration })
+        });
+    }
+    
+    function resetTimer() {
+        clearInterval(interval);
+        elapsedTime = 0;
+        document.getElementById("timer").textContent = "0.0s";
+    }
+    </script>
+    
