@@ -1,0 +1,59 @@
+<!-- leaderboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Leaderboard</h1>
+        <table id="leaderboard-table">
+            <tr>
+                <th>Rank</th>
+                <th>User</th>
+                <th>Study Time</th>
+            </tr>
+            <!-- table rows will be populated dynamically -->
+        </table>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script>
+        const leaderboardTable = document.getElementById("leaderboard-table");
+        
+        // Get the leaderboard data from the backend
+        fetch('/get-leaderboard')
+            .then(response => response.json())
+            .then(data => {
+                // Populate the leaderboard table with the data
+                data.forEach((user, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${user.user}</td>
+                        <td>${user.studyTime} seconds</td>
+                    `;
+                    leaderboardTable.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error getting leaderboard data:", error));
+    </script>
+</body>
+</html>

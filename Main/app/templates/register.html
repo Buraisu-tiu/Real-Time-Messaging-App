@@ -1,0 +1,62 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Register</h1>
+        <form id="register-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email"><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br><br>
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password"><br><br>
+            <button type="submit">Register</button>
+        </form>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    <script>
+        const registerForm = document.getElementById("register-form");
+        registerForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            if (password !== confirmPassword) {
+                console.error("Passwords do not match");
+                return;
+            }
+            firebase.auth().createUser WithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log("Registered as:", user.email);
+                    window.location.href = "login.html";
+                })
+                .catch((error) => {
+                    console.error("Error registering:", error);
+                });
+        });
+    </script>
+</body>
+</html>

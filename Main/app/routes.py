@@ -55,6 +55,17 @@ def leaderboard():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@routes.route("/register", methods=["POST"])
+def register():
+    email = request.json.get("email")
+    password = request.json.get("password")
+
+    try:
+        user = auth.create_user(email=email, password=password)
+        return jsonify({"message": "User  created successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
 @routes.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
