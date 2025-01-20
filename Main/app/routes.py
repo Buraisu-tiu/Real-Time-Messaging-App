@@ -1,9 +1,11 @@
 from flask import *
 from firebase_admin import auth
 import jwt
-from config import db  # Import Firestore instance
-from config import Config  # Access app configuration if needed
+from config import db
+from config import Config
 import firestore
+import firebase_admin
+
 
 routes = Blueprint('routes', __name__)
 
@@ -68,4 +70,62 @@ def register():
     
 @routes.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    if "user" not in session:  # Check if the user is logged in
+        return redirect(url_for("routes.register_page"))  # Redirect to registration page
+    return render_template("index.html")  # Render the home page for logged-in users
+
+# Add these routes to your existing routes.py file
+@routes.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")  # Render the login.html template
+
+@routes.route("/register", methods=["GET"])
+def register_page():
+    return render_template("register.html")  # Render the register.html template
+
+@routes.route("/login", methods=["POST"])
+def login_submit():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    try:
+        # Authenticate with Firebase
+        user = firebase_admin.auth.get_user_by_email(email)
+        session["user"] = user.uid  # Store user ID in session
+        return redirect(url_for("routes.index"))  # Redirect to home page
+    except Exception as e:
+        return jsonify({"error": str(e)}), 401
+
+@routes.route("/register", methods=["POST"])
+def register_submit():
+    print("Request Content-Type:", request.content_type)  # Debug: Check Content-Type
+    print("Request Data:", request.form)  # Debug: Check form data
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+    confirm_password = request.form.get("confirm_password")  # Use underscore to match form data
+
+    if not email or not password or not confirm_password:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match"}), 400
+
+    try:
+        # Create user in Firebase
+        user = auth.create_user(email=email, password=password)
+        session["user"] = user.uid  # Store user ID in session
+        return jsonify({"message": "Registration successful"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+def login_required(f):
+    def wrapper(*args, **kwargs):
+        if "user" not in session:  # Check if the user is logged in
+            return redirect(url_for("routes.register_page"))  # Redirect to registration page
+        return f(*args, **kwargs)
+    return wrapper
+
+@routes.route("/logout", methods=["GET"])
+def logout():
+    session.pop("user", None)  # Clear the session
+    return redirect(url_for("routes.register_page"))  # Redirect to registration page

@@ -9,14 +9,14 @@
     <header>
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="register.html">Register</a></li>
+                <li><a href="/">Home</a></li>  <!-- Updated to use Flask route -->
+                <li><a href="/register">Register</a></li>  <!-- Updated to use Flask route -->
             </ul>
         </nav>
     </header>
     <main>
         <h1>Login</h1>
-        <form id="login-form">
+        <form id="login-form" action="/login" method="POST">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email"><br><br>
             <label for="password">Password:</label>

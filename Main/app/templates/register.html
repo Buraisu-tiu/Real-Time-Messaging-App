@@ -1,4 +1,3 @@
-<!-- register.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +8,8 @@
     <header>
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -18,43 +17,59 @@
         <h1>Register</h1>
         <form id="register-form">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email"><br><br>
+            <input type="email" id="email" name="email" required><br><br>
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password"><br><br>
+            <input type="password" id="password" name="password" required><br><br>
             <label for="confirm-password">Confirm Password:</label>
-            <input type="password" id="confirm-password" name="confirm-password"><br><br>
+            <input type="password" id="confirm-password" name="confirm-password" required><br><br>
             <button type="submit">Register</button>
         </form>
     </main>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth.js"></script>
-    <script>
+    <!-- Firebase v9+ Imports -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
+        apiKey: "AIzaSyAYiQKmfjp6TSHKNFpW2-Tgg0WnJGtPuzE",
+        authDomain: "studysync-938cc.firebaseapp.com",
+        projectId: "studysync-938cc",
+        storageBucket: "studysync-938cc.firebasestorage.app",
+        messagingSenderId: "117127171222",
+        appId: "1:117127171222:web:9baa822f06ce4745bcc6b7",
+        measurementId: "G-N518CN3VJJ"
         };
-        firebase.initializeApp(firebaseConfig);
-    </script>
-    <script>
-        const registerForm = document.getElementById("register-form");
-        registerForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        document.getElementById("register-form").addEventListener("submit", function (e) {
+            e.preventDefault();  // Prevent the default form submission
+
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
+
             if (password !== confirmPassword) {
-                console.error("Passwords do not match");
+                alert("Passwords do not match!");
                 return;
             }
-            firebase.auth().createUser WithEmailAndPassword(email, password)
+
+            createUser WithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    console.log("Registered as:", user.email);
-                    window.location.href = "login.html";
+                    alert("Registration successful!");
+                    window.location.href = "/";  // Redirect to home page
                 })
                 .catch((error) => {
-                    console.error("Error registering:", error);
+                    console.error("Error:", error);
+                    alert("An error occurred. Please try again.");
                 });
         });
     </script>
